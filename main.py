@@ -202,11 +202,8 @@ def evolve( refPosAtoms, modPosAtoms):
     print best_sol[0][-1]
 
 def main():
-    refPdb = PDBReader()
-    modPdb = PDBReader()
-
-    refPdb.readFile( "files/reference.pdb" )
-    modPdb.readFile( "files/reference.pdb" )
+    refPdb = PDBReader( "files/reference.pdb" )
+    modPdb = PDBReader( "files/reference.pdb" )
 
     oldRef = refPdb.posAtoms
     oldMod = modPdb.posAtoms

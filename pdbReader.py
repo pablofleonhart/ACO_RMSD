@@ -6,11 +6,17 @@ class PDBReader:
 	ATOM_TAG = "ATOM"
 	END_TAG = "TER"
 
+	fileName = ""
 	atoms = []
 	aminoAcids = []
 	posAtoms = []
 	backbone = []
 	alpha = []
+
+	def __init__( self, fileName ):
+		self.fileName = fileName
+
+		self.readFile()
 
 	def isNumber( self, value ):
 		try:
@@ -20,13 +26,13 @@ class PDBReader:
 		except ValueError:
 			return False
 
-	def readFile( self, fileName ):
+	def readFile( self ):
 		self.atoms = []
 		self.aminoAcids = []
 		self.posAtoms = []
 
 		finish = False
-		file = open( fileName, "r" )
+		file = open( self.fileName, "r" )
 
 		while not finish:
 			line = file.readline()
