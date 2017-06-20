@@ -58,9 +58,9 @@ def evolve( refPosAtoms, modPosAtoms):
     response_v = ['x1','x2', 'x3', 'x4', 'x5', 'x6']
 
     # number of variables
-    nVar = len(parameters_v)
+    numVariables = len(parameters_v)
     # size of solution archive
-    nSize = 100
+    solutionSize = 100
     # number of ants
     nAnts = 50
 
@@ -68,24 +68,24 @@ def evolve( refPosAtoms, modPosAtoms):
     q = 0.02
 
     # standard deviation
-    qk = q*nSize
+    qk = q*solutionSize
 
     # parameter xi (like pheromone evaporation)
     xi = 0.8
 
     # maximum iterations
-    maxiter = 1500
+    maxiter = 10
 
     # bounds of variables
-    Up = [1]*nVar
-    Lo = [0]*nVar
+    Up = [1]*numVariables
+    Lo = [0]*numVariables
 
     # initilize matrices
-    S = np.zeros((nSize,nVar))
-    S_f = np.zeros((nSize,1))
+    S = np.zeros((solutionSize,numVariables))
+    S_f = np.zeros((solutionSize,1))
 
     # inicializar matriz de solucoes
-    Srand = initialize(nSize,nVar)
+    Srand = initialize(solutionSize,numVariables)
 
     f,S_r,maximize = mp_evaluator(Srand, refPosAtoms, modPosAtoms)
 
@@ -106,9 +106,9 @@ def evolve( refPosAtoms, modPosAtoms):
     S = np.array(S)
 
     # initilize weight array with pdf function
-    w = np.zeros((nSize))
-    for i in range(nSize):
-        w[i] = 1/(qk*math.sqrt(2*math.pi))*math.exp(-math.pow(i,2)/(2*math.pow(q,2)*math.pow(nSize,2)))
+    w = np.zeros((solutionSize))
+    for i in range(solutionSize):
+        w[i] = 1/(qk*math.sqrt(2*math.pi))*math.exp(-math.pow(i,2)/(2*math.pow(q,2)*math.pow(solutionSize,2)))
 
     # initialize variables
     iterations = 1
@@ -117,10 +117,10 @@ def evolve( refPosAtoms, modPosAtoms):
     best_sol = []
     best_res = []
     worst_obj = []
-    best_par.append(S[0][:nVar])
+    best_par.append(S[0][:numVariables])
     best_obj.append(S[0][-1])
     best_sol.append(S[0][:])
-    best_res.append(S[0][nVar:-1])
+    best_res.append(S[0][numVariables:-1])
     worst_obj.append(S[-1][-1])
 
     stop = 0
@@ -137,18 +137,18 @@ def evolve( refPosAtoms, modPosAtoms):
 
         # calculation of G_i
         # find standard deviation sigma
-        sigma_s = np.zeros((nVar,1))
-        sigma = np.zeros((nVar,1))
-        for i in range(nVar):
-            for j in range(nSize):
+        sigma_s = np.zeros((numVariables,1))
+        sigma = np.zeros((numVariables,1))
+        for i in range(numVariables):
+            for j in range(solutionSize):
                 sigma_s[i] = sigma_s[i] + abs(S[j][i] - S[selection][i])
-            sigma[i] = xi / (nSize -1) * sigma_s[i]
+            sigma[i] = xi / (solutionSize -1) * sigma_s[i]
 
-        Stemp = np.zeros((nAnts,nVar))
+        Stemp = np.zeros((nAnts,numVariables))
         ffeval = np.zeros((nAnts,1))
         res = np.zeros((nAnts,len(response_v)))
         for k in range(nAnts):
-            for i in range(nVar):
+            for i in range(numVariables):
                 Stemp[k][i] = sigma[i] * np.random.random_sample() + S[selection][i]
                 if Stemp[k][i] > Up[i]:
                     Stemp[k][i] = Up[i]
@@ -180,22 +180,23 @@ def evolve( refPosAtoms, modPosAtoms):
 
         #print Solution_temp
         # keep best solutions
-        S = Solution_temp[:nSize][:]
+        S = Solution_temp[:solutionSize][:]
 
         # keep best after each iteration
-        best_par.append(S[0][:nVar])
+        best_par.append(S[0][:numVariables])
         best_obj.append(S[0][-1])
-        best_res.append(S[0][nVar:-1])
+        best_res.append(S[0][numVariables:-1])
         best_sol.append(S[0][:])
         worst_obj.append(S[-1][-1])
 
+        print best_sol[0][-1]
         iterations += 1
         if iterations > maxiter or stop > 5 or best_sol[0][-1] == 0.0:
             break
 
     total_time_s = time() - start_time
     total_time = datetime.timedelta(seconds=total_time_s)
-    total_time = formatTD(total_time)
+    #total_time = formatTD(total_time)
 
     best_sol = sorted(best_sol, key=lambda row: row[-1],reverse = maximize)
 
@@ -215,16 +216,16 @@ def main():
     refPdb.calcCaPos()
     modPdb.calcCaPos()
 
-    print "#########All atoms#########"
+    '''print "#########All atoms#########"
     for i in range( 30 ):
         evolve( refPdb.posAtoms, modPdb.posAtoms )
 
     print "#########Backbone atoms#########"
     for i in range( 30 ):
-        evolve( refPdb.backbone, modPdb.backbone )
+        evolve( refPdb.backbone, modPdb.backbone )'''
 
     print "#########Alpha atoms#########"
-    for i in range( 30 ):
+    for i in range( 1 ):
         evolve( refPdb.alpha, modPdb.alpha )
 
 if __name__ == "__main__":

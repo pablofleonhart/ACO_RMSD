@@ -36,9 +36,11 @@ class PDBAligner:
         return solution
 
     def calcRMSD( self, reference, solution ):
+        #print solution
         sumDistance = 0
 
         for i in range( len( reference ) ):
+            #print reference[i][0], solution[i][0], math.pow( reference[i][0] - solution[i][0], 2 )
             sumDistance += math.pow( reference[i][0] - solution[i][0], 2 )
             sumDistance += math.pow( reference[i][1] - solution[i][1], 2 )
             sumDistance += math.pow( reference[i][2] - solution[i][2], 2 )
