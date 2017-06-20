@@ -219,7 +219,7 @@ def evolve(refPosAtoms, modPosAtoms,display):
     xi = 0.85
 
     # maximum iterations
-    maxiter = 1500
+    maxiter = 2000
     # tolerance
     errormin = 0.01
 
@@ -327,7 +327,6 @@ def evolve(refPosAtoms, modPosAtoms,display):
             for j in range(nSize):
                 sigma_s[i] += abs(S[j][i] - S[sol][i])
             sigma[i] = xi * ( sigma_s[i] / (nSize -1) )
-
         Stemp = np.zeros((nAnts,nVar))
         ffeval = np.zeros((nAnts,1))
         res = np.zeros((nAnts,len(response_v)))
@@ -374,9 +373,7 @@ def evolve(refPosAtoms, modPosAtoms,display):
         max_prospect = np.amax(p)
         ix_prospect = np.argmax(p)
         selection = ix_prospect
-
         #print "selection", selection
-
         #print "p", p
         cs = np.random.random_sample()
         #print cs
@@ -386,9 +383,7 @@ def evolve(refPosAtoms, modPosAtoms,display):
             if cs <= total:
                 sol = z
                 break
-
         print sol
-
         # calculation of G_i
         # find standard deviation sigma
         sigma_s = np.zeros((nVar,1))
@@ -398,7 +393,6 @@ def evolve(refPosAtoms, modPosAtoms,display):
             for j in range(nSize):
                 sigma_s[i] += abs(S[j][i] - S[sol][i])
             sigma[i] = xi * ( sigma_s[i] / (nSize -1) )
-
         print sigma
         Stemp = np.zeros((nAnts,nVar))
         ffeval = np.zeros((nAnts,1))
@@ -500,8 +494,9 @@ def evolve(refPosAtoms, modPosAtoms,display):
 
 # Executes optimization run.
 # If display = True plots ants in 2D design space
-refPdb = PDBReader( "/home/pablo/UFRGS/ACO_RMSD/files/reference.pdb" )
-modPdb = PDBReader( "/home/pablo/UFRGS/ACO_RMSD/files/reference.pdb" )
+os.chdir( "../files" )
+refPdb = PDBReader( "reference.pdb" )
+modPdb = PDBReader( "reference.pdb" )
 
 oldRef = refPdb.posAtoms
 oldMod = modPdb.posAtoms

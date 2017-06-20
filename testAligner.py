@@ -16,8 +16,12 @@ class tAligner( object ):
         rotZ = np.matrix([[math.cos(rot[2]), -math.sin(rot[2]), 0.0], [math.sin(rot[2]), math.cos(rot[2]), 0.0], [0.0, 0.0, 1.0]])
         rotXYZ = rotZ * rotY * rotX
 
+        #print 'BG:'
+        #print rotXYZ.transpose()
+
         transformed_atoms = np.matrix(copy.deepcopy(mob_atoms))
         transformed_atoms = transformed_atoms + translation
+        print transformed_atoms
         transformed_atoms = transformed_atoms * rotXYZ.transpose()
        
         transformed_atoms = np.matrix.tolist(transformed_atoms)
